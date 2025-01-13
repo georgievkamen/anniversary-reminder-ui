@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoginRegister.css';
 
 const LoginRegister = () => {
-    // States to manage form data and toggling between Login and Register
+    // States to manage form data, toggling between Login and Register, and error/loading states
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -10,10 +10,16 @@ const LoginRegister = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Get the user's timezone automatically using Intl API
-    const getUserTimezone = () => {
-        return Intl.DateTimeFormat().resolvedOptions().timeZone;
-    };
+    // Automatically get and set the user's timezone on component mount
+    useEffect(() => {
+        setTimezone(() => {
+            try {
+                return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            } catch {
+                return 'UTC';
+            }
+        });
+    }, []);
 
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -21,78 +27,47 @@ const LoginRegister = () => {
         setLoading(true);
         setError(null);
 
-        const formData = {
-            email,
-            password,
-            timezone,
+        const url = isLogin
+            ? 'https://anniversary-reminder.onrender.com/api/users/login'
+            : 'https://anniversary-reminder.onrender.com/api/users/register';
+
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(isLogin ? {} : { timeZoneId: timezone }),
         };
 
+        const body = JSON.stringify({ email, password });
+
         try {
-            if (isLogin) {
-                // Login request
-                const loginResponse = await fetch('https://anniversary-reminder.onrender.com/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
-                });
+            const response = await fetch(url, { method: 'POST', headers, body });
 
-                if (!loginResponse.ok) {
-                    throw new Error('Login failed. Please check your credentials.');
-                }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An unexpected error occurred.');
+            }
 
-                // Handle successful login (you can store the JWT or session here)
-                alert('Login successful!');
-                // Redirect to dashboard or another page after successful login
-                // navigate("/dashboard"); // Uncomment if you are using react-router
-            } else {
-                // Register request
-                const registerResponse = await fetch('https://anniversary-reminder.onrender.com/api/users/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'timeZoneId': timezone, // Send timezone in headers
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
-                });
-
-                if (!registerResponse.ok) {
-                    throw new Error('Registration failed. Please try again.');
-                }
-
-                alert('Registration successful! Redirecting to login...');
-                // Redirect to login page after successful registration
-                setIsLogin(true); // Switch to login form
-                setLoading(false); // End loading state
+            alert(isLogin ? 'Login successful!' : 'Registration successful! Redirecting to login...');
+            if (!isLogin) {
+                setIsLogin(true); // Switch to login form after successful registration
             }
         } catch (err) {
             setError(err.message);
+        } finally {
             setLoading(false);
         }
     };
 
-    // Handle form input changes
+    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name === 'email') setEmail(value);
         if (name === 'password') setPassword(value);
     };
 
-    // Set timezone automatically when Register form is shown
-    if (!timezone && !isLogin) {
-        setTimezone(getUserTimezone());
-    }
-
     return (
         <div className="auth-container">
             <div className="form-container">
+                {/* Toggle between Login and Register */}
                 <div className="form-toggle">
                     <button
                         onClick={() => setIsLogin(true)}
@@ -108,63 +83,65 @@ const LoginRegister = () => {
                     </button>
                 </div>
 
-                {/* Login Form */}
-                {isLogin ? (
-                    <form className="auth-form" onSubmit={handleSubmit}>
-                        <h2>Login</h2>
-                        <input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={handleInputChange}
-                            placeholder="Email"
-                            required
-                        />
-                        <input
-                            type="password"
-                            name="password"
-                            value={password}
-                            onChange={handleInputChange}
-                            placeholder="Password"
-                            required
-                        />
-                        {error && <p className="error">{error}</p>}
-                        <button type="submit" className="auth-btn" disabled={loading}>
-                            {loading ? 'Logging in...' : 'Login'}
-                        </button>
-                    </form>
-                ) : (
-                    // Register Form
-                    <form className="auth-form" onSubmit={handleSubmit}>
-                        <h2>Register</h2>
-                        <input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={handleInputChange}
-                            placeholder="Email"
-                            required
-                        />
-                        <input
-                            type="password"
-                            name="password"
-                            value={password}
-                            onChange={handleInputChange}
-                            placeholder="Password"
-                            required
-                        />
-                        <input
-                            type="text"
-                            value={timezone}
-                            placeholder="Timezone"
-                            disabled
-                        />
-                        {error && <p className="error">{error}</p>}
-                        <button type="submit" className="auth-btn" disabled={loading}>
-                            {loading ? 'Registering...' : 'Register'}
-                        </button>
-                    </form>
-                )}
+                {/* Form */}
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <h2>{isLogin ? 'Login' : 'Register'}</h2>
+
+                    {/* Email Input */}
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        value={email}
+                        onChange={handleInputChange}
+                        placeholder="Email"
+                        required
+                        aria-label="Email"
+                    />
+
+                    {/* Password Input */}
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        value={password}
+                        onChange={handleInputChange}
+                        placeholder="Password"
+                        required
+                        aria-label="Password"
+                    />
+
+                    {/* Timezone Display (only for Registration) */}
+                    {!isLogin && (
+                        <>
+                            <label htmlFor="timezone">Timezone</label>
+                            <input
+                                type="text"
+                                id="timezone"
+                                value={timezone}
+                                placeholder="Timezone"
+                                disabled
+                                aria-label="Timezone"
+                            />
+                        </>
+                    )}
+
+                    {/* Error Message */}
+                    {error && <p className="error">{error}</p>}
+
+                    {/* Submit Button */}
+                    <button type="submit" className="auth-btn" disabled={loading}>
+                        {loading
+                            ? isLogin
+                                ? 'Logging in...'
+                                : 'Registering...'
+                            : isLogin
+                                ? 'Login'
+                                : 'Register'}
+                    </button>
+                </form>
             </div>
         </div>
     );
