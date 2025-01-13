@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import './LoginRegister.css';
 
 const LoginRegister = () => {
@@ -9,6 +10,8 @@ const LoginRegister = () => {
     const [timezone, setTimezone] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate(); // Initialize the useNavigate hook
 
     // Automatically get and set the user's timezone on component mount
     useEffect(() => {
@@ -33,7 +36,7 @@ const LoginRegister = () => {
 
         const headers = {
             'Content-Type': 'application/json',
-            ...(isLogin ? {} : { timeZoneId: timezone }),
+            ...(isLogin ? {} : { timeZoneId: timezone }), // Include timezone only for registration
         };
 
         const body = JSON.stringify({ email, password });
@@ -46,8 +49,12 @@ const LoginRegister = () => {
                 throw new Error(errorData.message || 'An unexpected error occurred.');
             }
 
-            alert(isLogin ? 'Login successful!' : 'Registration successful! Redirecting to login...');
-            if (!isLogin) {
+            if (isLogin) {
+                // On successful login, get the token directly as a string
+                const token = await response.text(); // Use .text() to get the plain token
+                localStorage.setItem('token', token); // Save token for future API calls
+                navigate('/api/anniversary/all'); // Redirect to the anniversaries page
+            } else {
                 setIsLogin(true); // Switch to login form after successful registration
             }
         } catch (err) {
