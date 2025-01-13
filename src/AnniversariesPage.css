@@ -1,35 +1,74 @@
-/* AnniversariesPage.css */
+/* Container for the whole page */
 .anniversaries-container {
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Title styling */
+.anniversaries-container h2 {
     text-align: center;
+    margin-bottom: 30px;
 }
 
-.anniversaries-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
+/* Grid container */
+.anniversaries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 1fr ensures equal spacing, minmax sets the column width */
+    gap: 20px; /* Space between grid items */
+    padding: 10px;
 }
 
+/* Individual anniversary item */
 .anniversary-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    width: 200px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Hover effect for anniversary item */
+.anniversary-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Anniversary title */
 .anniversary-item h3 {
-    font-size: 18px;
-    margin: 10px 0;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
 }
 
+/* Anniversary date */
 .anniversary-item p {
-    font-size: 16px;
+    font-size: 1em;
     color: #555;
 }
 
+/* Error message styling */
 .error {
     color: red;
     text-align: center;
+    margin-top: 20px;
 }
+
+.create-anniversary-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.create-anniversary-btn:hover {
+    background-color: #45a049;
+}
+

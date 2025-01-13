@@ -1,10 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import './AnniversariesPage.css'; // Import the CSS file for styling
 
 const AnniversariesPage = () => {
     const [anniversaries, setAnniversaries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const navigate = useNavigate(); // Initialize the useNavigate hook
 
     useEffect(() => {
         // Fetch the anniversaries data after the component mounts
@@ -40,8 +43,15 @@ const AnniversariesPage = () => {
 
     return (
         <div className="anniversaries-container">
+            <button
+                className="create-anniversary-btn"
+                onClick={() => navigate('/anniversary/add')} // Redirect to Create Anniversary page
+            >
+                Create Anniversary
+            </button>
+
             <h2>All Anniversaries</h2>
-            <div className="anniversaries-list">
+            <div className="anniversaries-grid">
                 {anniversaries.length > 0 ? (
                     anniversaries.map((anniversary) => (
                         <div key={anniversary.id} className="anniversary-item">
