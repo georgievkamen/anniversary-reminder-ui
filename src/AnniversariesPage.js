@@ -10,31 +10,34 @@ const AnniversariesPage = () => {
     const [description, setDescription] = useState('');
     const [formError, setFormError] = useState(null);
 
-    useEffect(() => {
-        const fetchAnniversaries = async () => {
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch('https://anniversary-reminder.onrender.com/api/anniversary/all', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+    // Function to fetch all anniversaries
+    const fetchAnniversaries = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            setLoading(true);
+            const response = await fetch('https://anniversary-reminder.onrender.com/api/anniversary/all', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch anniversaries');
-                }
-
-                const data = await response.json();
-                setAnniversaries(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error('Failed to fetch anniversaries');
             }
-        };
 
+            const data = await response.json();
+            setAnniversaries(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Use useEffect to load anniversaries initially
+    useEffect(() => {
         fetchAnniversaries();
     }, []);
 
@@ -67,8 +70,8 @@ const AnniversariesPage = () => {
             });
 
             if (response.ok && response.status === 201) {
-                const newAnniversary = await response.json();
-                setAnniversaries((prevAnniversaries) => [...prevAnniversaries, newAnniversary]);
+                // After successfully creating an anniversary, re-fetch all anniversaries
+                fetchAnniversaries();
                 setShowForm(false);
                 setDate('');
                 setDescription('');
@@ -84,22 +87,21 @@ const AnniversariesPage = () => {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch(`https://anniversary-reminder.onrender.com/api/anniversary/delete`, {
+            // Use id as a path variable in the URL
+            const response = await fetch(`https://anniversary-reminder.onrender.com/api/anniversary/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id }),
             });
 
             if (!response.ok) {
                 throw new Error('Failed to delete anniversary');
             }
 
-            setAnniversaries((prevAnniversaries) =>
-                prevAnniversaries.filter((anniversary) => anniversary.id !== id)
-            );
+            // After successfully deleting an anniversary, re-fetch all anniversaries
+            fetchAnniversaries();
         } catch (err) {
             setError(err.message);
         }
