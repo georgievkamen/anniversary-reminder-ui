@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import './AnniversariesPage.css'; // Import the CSS file for styling
+import './AnniversariesPage.css';
 
 const AnniversariesPage = () => {
     const [anniversaries, setAnniversaries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showForm, setShowForm] = useState(false); // State to toggle the form visibility
-    const [date, setDate] = useState(''); // Date state
-    const [description, setDescription] = useState(''); // Description state
-    const [formError, setFormError] = useState(null); // Form error state
+    const [showForm, setShowForm] = useState(false);
+    const [date, setDate] = useState('');
+    const [description, setDescription] = useState('');
+    const [formError, setFormError] = useState(null);
 
     useEffect(() => {
         const fetchAnniversaries = async () => {
@@ -27,7 +27,7 @@ const AnniversariesPage = () => {
                 }
 
                 const data = await response.json();
-                setAnniversaries(data); // Assume the response is an array of anniversaries
+                setAnniversaries(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -38,20 +38,18 @@ const AnniversariesPage = () => {
         fetchAnniversaries();
     }, []);
 
-    // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name === 'date') setDate(value);
         if (name === 'description') setDescription(value);
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormError(null);
 
         if (!date || !description) {
-            setFormError("Both date and description are required.");
+            setFormError('Both date and description are required.');
             return;
         }
 
@@ -69,13 +67,9 @@ const AnniversariesPage = () => {
             });
 
             if (response.ok && response.status === 201) {
-                // The server has successfully created the resource and returned a 201 status
-                // Optionally, you can handle a successful creation here (e.g., show a success message or update the UI)
-                setAnniversaries(prevAnniversaries => [...prevAnniversaries, anniversaryData]);
-
-                // Hide the form after successful submission
+                const newAnniversary = await response.json();
+                setAnniversaries((prevAnniversaries) => [...prevAnniversaries, newAnniversary]);
                 setShowForm(false);
-                // Clear the form fields
                 setDate('');
                 setDescription('');
             } else {
@@ -86,19 +80,42 @@ const AnniversariesPage = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`https://anniversary-reminder.onrender.com/api/anniversary/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete anniversary');
+            }
+
+            setAnniversaries((prevAnniversaries) =>
+                prevAnniversaries.filter((anniversary) => anniversary.id !== id)
+            );
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     if (loading) return <p>Loading anniversaries...</p>;
     if (error) return <p className="error">{error}</p>;
 
     return (
-        <div className="anniversaries-container">
+        <div className={`anniversaries-container ${showForm ? 'show-form' : ''}`}>
             <h2>All Anniversaries</h2>
 
-            {/* Button to toggle form visibility */}
             <button onClick={() => setShowForm(!showForm)} className="create-anniversary-btn">
                 {showForm ? 'Cancel' : 'Create Anniversary'}
             </button>
 
-            {/* Show form when showForm is true */}
             {showForm && (
                 <form onSubmit={handleSubmit} className="create-anniversary-form">
                     <div>
@@ -124,20 +141,28 @@ const AnniversariesPage = () => {
                         />
                     </div>
 
-                    {/* Display form error */}
                     {formError && <p className="error">{formError}</p>}
 
                     <button type="submit">Submit</button>
                 </form>
             )}
 
-            {/* Anniversaries list */}
             <div className="anniversaries-list">
                 {anniversaries.length > 0 ? (
                     anniversaries.map((anniversary) => (
                         <div key={anniversary.id} className="anniversary-item">
-                            <h3>{anniversary.description}</h3>
-                            <p>{new Date(anniversary.date).toLocaleDateString()}</p>
+                            <div className="content">
+                                <div>
+                                    <h3>{anniversary.description}</h3>
+                                    <p>{new Date(anniversary.date).toLocaleDateString()}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleDelete(anniversary.id)}
+                                    className="delete-anniversary-btn"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))
                 ) : (
