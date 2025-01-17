@@ -99,3 +99,74 @@ input[type="text"] {
     border-radius: 4px;
     background-color: #f9f9f9;
 }
+
+/* Slogan Section */
+.slogan {
+    text-align: center;
+    margin-bottom: 1.5rem; /* Space below the slogan */
+    padding: 1rem; /* Adjust padding for better alignment */
+    background-color: #f9f9f9; /* Light background color */
+    border: 1px solid #e0e0e0; /* Subtle border for separation */
+    border-radius: 8px;
+    width: 90%; /* Slightly reduced width for smaller screens */
+    max-width: 600px; /* Ensure it doesn't get too wide on larger screens */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.slogan h1 {
+    font-size: 1.8rem; /* Adjusted for better fit */
+    color: #333333; /* Darker color for contrast */
+    margin-bottom: 0.5rem; /* Spacing below the heading */
+    font-weight: bold;
+}
+
+.slogan p {
+    font-size: 1rem; /* Adjusted for balance */
+    color: #555555; /* Slightly lighter color for readability */
+    line-height: 1.5; /* Consistent line height */
+    margin: 0;
+}
+
+/* Auth Container */
+.auth-container {
+    display: flex;
+    flex-direction: column; /* Stack the slogan on top of the form */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 1rem; /* Add padding for mobile devices */
+}
+
+/* Form Container */
+.form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 90%; /* Reduce width for smaller screens */
+    max-width: 400px; /* Cap the width for larger screens */
+    text-align: center;
+    margin: 0 auto; /* Center align the container */
+}
+
+/* Input Fields and Buttons */
+input, .auth-btn {
+    width: 100%; /* Ensure full-width on all screens */
+}
+
+/* Adjust Spacing for Smaller Screens */
+@media (max-width: 768px) {
+    .slogan h1 {
+        font-size: 1.5rem;
+    }
+
+    .slogan p {
+        font-size: 0.9rem;
+    }
+
+    .form-container {
+        padding: 20px; /* Reduce padding on smaller screens */
+    }
+}
+
+

@@ -73,17 +73,26 @@ const LoginRegister = () => {
 
     return (
         <div className="auth-container">
-            <div className="form-container">
-                {/* Toggle between Login and Register */}
-                <div className="form-toggle">
-                    <button
-                        onClick={() => setIsLogin(true)}
-                        className={`form-btn ${isLogin ? 'active' : ''}`}
-                    >
-                        Login
-                    </button>
-                    <button
-                        onClick={() => setIsLogin(false)}
+            {/* Slogan Section */}
+            <div className="slogan">
+                <h1>Welcome to Anniversary Reminder App</h1>
+                <p>
+                    Never miss an event or your friend's birthday again! Register, add an event,
+                    and receive email reminders for your important dates.
+                </p>
+            </div>
+
+    <div className="form-container">
+        {/* Toggle between Login and Register */}
+        <div className="form-toggle">
+            <button
+                onClick={() => setIsLogin(true)}
+                className={`form-btn ${isLogin ? 'active' : ''}`}
+            >
+                Login
+            </button>
+            <button
+                onClick={() => setIsLogin(false)}
                         className={`form-btn ${!isLogin ? 'active' : ''}`}
                     >
                         Register
