@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/anniversary-reminder-ui/static/css/main.a3779bf4.css",
-    "main.js": "/anniversary-reminder-ui/static/js/main.313a829b.js",
+    "main.css": "/anniversary-reminder-ui/static/css/main.ad411223.css",
+    "main.js": "/anniversary-reminder-ui/static/js/main.ff9dc17d.js",
     "static/js/453.21afe687.chunk.js": "/anniversary-reminder-ui/static/js/453.21afe687.chunk.js",
     "index.html": "/anniversary-reminder-ui/index.html",
-    "main.a3779bf4.css.map": "/anniversary-reminder-ui/static/css/main.a3779bf4.css.map",
-    "main.313a829b.js.map": "/anniversary-reminder-ui/static/js/main.313a829b.js.map",
+    "main.ad411223.css.map": "/anniversary-reminder-ui/static/css/main.ad411223.css.map",
+    "main.ff9dc17d.js.map": "/anniversary-reminder-ui/static/js/main.ff9dc17d.js.map",
     "453.21afe687.chunk.js.map": "/anniversary-reminder-ui/static/js/453.21afe687.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a3779bf4.css",
-    "static/js/main.313a829b.js"
+    "static/css/main.ad411223.css",
+    "static/js/main.ff9dc17d.js"
   ]
 }
