@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginRegister from './LoginRegister'; // Import the LoginRegister component
 import AnniversariesPage from './AnniversariesPage'; // Import your anniversaries page
 
